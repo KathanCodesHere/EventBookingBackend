@@ -1,7 +1,10 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+
+//import routes
 import authRoutes from "./routes/authRoutes.js";
+import adminUserRoutes from "./routes/admin/adminUserRoutes.js";
 const app = express();
 
 /*Middlewares*/
@@ -25,6 +28,9 @@ app.use(
 
 // Routes
 app.use("/api/auth", authRoutes);
+
+//admin routes
+app.use("/api/admin/users", adminUserRoutes);
 
 /*Health Check
 Ye route check karta hai ki server sahi se chal raha hai ya nahi.
