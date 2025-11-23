@@ -1,199 +1,3 @@
-// import User from "../../models/user.js";
-
-// import {
-//   sendSuccess,
-//   sendError,
-//   sendNotFound,
-//   sendValidationError,
-//   sendConflict,
-// } from "../../utils/responseHandler.js";
-
-// import { validateObjectId, validateRole } from "../../validation/validation.js";
-
-// /**
-//  * @desc Get all users
-//  * @route GET /admin/users
-//  */
-// export const getAllUsers = async (req, res) => {
-//   try {
-//     const users = await User.find().select("-password -refreshToken");
-
-//     return sendSuccess(res, users, "All users fetched successfully");
-//   } catch (error) {
-//     console.error("Get all users error:", error);
-//     return sendError(res, "Error fetching users");
-//   }
-// };
-
-// /**
-//  * @desc Get user by ID
-//  * @route GET /admin/users/:id
-//  */
-// export const getUserById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     if (!validateObjectId(id)) {
-//       return sendValidationError(res, [
-//         { field: "id", message: "Invalid User ID" },
-//       ]);
-//     }
-
-//     const user = await User.findById(id).select("-password -refreshToken");
-
-//     if (!user) {
-//       return sendNotFound(res, "User not found");
-//     }
-
-//     return sendSuccess(res, user, "User details fetched");
-//   } catch (error) {
-//     console.error("Get user by Id Error:", error);
-//     return sendError(res, "Error fetching user details");
-//   }
-// };
-
-// /**
-//  * @desc Update user role
-//  * @route PATCH /admin/users/:id/role
-//  */
-// export const updateUserRole = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { role } = req.body;
-
-//     if (!validateObjectId(id)) {
-//       return sendValidationError(res, [
-//         { field: "id", message: "Invalid User ID" },
-//       ]);
-//     }
-
-//     const roleCheck = validateRole(role);
-//     if (!roleCheck.isValid) {
-//       return sendValidationError(res, [
-//         { field: "role", message: roleCheck.message },
-//       ]);
-//     }
-
-//     const updatedUser = await User.findByIdAndUpdate(
-//       id,
-//       { role },
-//       { new: true }
-//     ).select("-password -refreshToken");
-
-//     if (!updatedUser) {
-//       return sendNotFound(res, "User not found");
-//     }
-
-//     return sendSuccess(res, updatedUser, "User role updated successfully");
-//   } catch (error) {
-//     console.error("User role update error:", error);
-//     return sendError(res, "Failed to update user role");
-//   }
-// };
-
-// /**
-//  * @desc Block / Unblock user
-//  * @route PATCH /admin/users/updateActiveStatus/:id/status
-//  */
-// export const updateActiveStatus = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { isActive } = req.body; // true / false
-
-//     if (!validateObjectId(id)) {
-//       return sendValidationError(res, [
-//         { field: "id", message: "Invalid User ID" },
-//       ]);
-//     }
-
-//     if (typeof isActive !== "boolean") {
-//       return sendValidationError(res, [
-//         { field: "isActive", message: "isActive must be boolean" },
-//       ]);
-//     }
-
-//     const updatedUser = await User.findByIdAndUpdate(
-//       id,
-//       { isActive },
-//       { new: true }
-//     ).select("-password -refreshToken");
-
-//     if (!updatedUser) {
-//       return sendNotFound(res, "User not found");
-//     }
-
-//     const msg = isActive
-//       ? "User unblocked successfully"
-//       : "User blocked successfully";
-
-//     return sendSuccess(res, updatedUser, msg);
-//   } catch (error) {
-//     console.error("Update user status error:", error);
-//     return sendError(res, "Failed to update user status");
-//   }
-// };
-
-// /**
-//  * @desc update role status
-//  * @route PATCH /admin/users/updateRoleStatus/:id/
-//  */
-// export const updateRoleStatus = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { status } = req.body;
-
-//     const user = await User.findById(id);
-
-//     if (!user) return sendNotFound(res, "User not found");
-
-//     // Organizer
-//     if (user.role === "organizer") {
-//       user.organizerInfo.status = status;
-//     }
-
-//     // Ticket Checker
-//     if (user.role === "ticketChecker") {
-//       user.ticketCheckerInfo.status = status;
-//     }
-
-//     await user.save();
-
-//     return sendSuccess(res, user, "Role-based status updated");
-//   } catch (error) {
-//     console.error("Update role status error:", error);
-//     return sendError(res, "Failed to update user status");
-//   }
-// };
-
-// /**
-//  * @desc Delete user
-//  * @route DELETE /admin/users/:id
-//  */
-// export const deleteUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     if (!validateObjectId(id)) {
-//       return sendValidationError(res, [
-//         { field: "id", message: "Invalid User ID" },
-//       ]);
-//     }
-
-//     const user = await User.findByIdAndDelete(id);
-
-//     if (!user) {
-//       return sendNotFound(res, "User not found");
-//     }
-
-//     return sendSuccess(res, null, "User deleted successfully");
-//   } catch (error) {
-//     console.error("Delete user error:", error);
-//     return sendError(res, "Error deleting user");
-//   }
-// };
-
-
-
 import mongoose from "mongoose";
 import User from "../../models/user.js";
 
@@ -206,10 +10,7 @@ import {
   sendForbidden,
 } from "../../utils/responseHandler.js";
 
-import {
-  validateObjectId,
-  validateRole,
-} from "../../validation/validation.js";
+import { validateObjectId, validateRole } from "../../validation/validation.js";
 
 /**
  * Allowed statuses for role-based entities
@@ -226,7 +27,10 @@ export const getAllUsers = async (req, res) => {
   try {
     // Pagination + filters + search
     const page = Math.max(parseInt(req.query.page || "1", 10), 1);
-    const limit = Math.min(Math.max(parseInt(req.query.limit || "20", 10), 1), 100);
+    const limit = Math.min(
+      Math.max(parseInt(req.query.limit || "20", 10), 1),
+      100
+    );
     const skip = (page - 1) * limit;
 
     const { q, role, isActive } = req.query;
@@ -255,7 +59,9 @@ export const getAllUsers = async (req, res) => {
 
     const [users, total] = await Promise.all([
       User.find(filter)
-        .select("-password -refreshToken -emailVerificationToken -emailVerificationExpires")
+        .select(
+          "-password -refreshToken -emailVerificationToken -emailVerificationExpires"
+        )
         .sort(sort)
         .skip(skip)
         .limit(limit)
@@ -270,7 +76,11 @@ export const getAllUsers = async (req, res) => {
       pages: Math.ceil(total / limit),
     };
 
-    return sendSuccess(res, { items: users, meta }, "Users fetched successfully");
+    return sendSuccess(
+      res,
+      { items: users, meta },
+      "Users fetched successfully"
+    );
   } catch (error) {
     console.error("getAllUsers error:", error);
     return sendError(res, "Error fetching users");
@@ -285,10 +95,14 @@ export const getUserById = async (req, res) => {
     const { id } = req.params;
 
     if (!validateObjectId(id)) {
-      return sendValidationError(res, [{ field: "id", message: "Invalid User ID" }]);
+      return sendValidationError(res, [
+        { field: "id", message: "Invalid User ID" },
+      ]);
     }
 
-    const user = await User.findById(id).select("-password -refreshToken -emailVerificationToken -emailVerificationExpires");
+    const user = await User.findById(id).select(
+      "-password -refreshToken -emailVerificationToken -emailVerificationExpires"
+    );
 
     if (!user) return sendNotFound(res, "User not found");
 
@@ -315,21 +129,28 @@ export const updateUserRole = async (req, res) => {
     if (!validateObjectId(id)) {
       await session.abortTransaction();
       session.endSession();
-      return sendValidationError(res, [{ field: "id", message: "Invalid User ID" }]);
+      return sendValidationError(res, [
+        { field: "id", message: "Invalid User ID" },
+      ]);
     }
 
     const roleCheck = validateRole(role);
     if (!roleCheck.isValid) {
       await session.abortTransaction();
       session.endSession();
-      return sendValidationError(res, [{ field: "role", message: roleCheck.message }]);
+      return sendValidationError(res, [
+        { field: "role", message: roleCheck.message },
+      ]);
     }
 
     // Prevent assigning admin via this endpoint to avoid accidental privilege escalation
     if (role === "admin") {
       await session.abortTransaction();
       session.endSession();
-      return sendForbidden(res, "Assigning admin role is not allowed via this endpoint");
+      return sendForbidden(
+        res,
+        "Assigning admin role is not allowed via this endpoint"
+      );
     }
 
     const user = await User.findById(id).session(session);
@@ -369,9 +190,15 @@ export const updateUserRole = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    const out = await User.findById(id).select("-password -refreshToken -emailVerificationToken -emailVerificationExpires");
+    const out = await User.findById(id).select(
+      "-password -refreshToken -emailVerificationToken -emailVerificationExpires"
+    );
 
-    return sendSuccess(res, out, `User role changed from '${oldRole}' to '${role}' successfully`);
+    return sendSuccess(
+      res,
+      out,
+      `User role changed from '${oldRole}' to '${role}' successfully`
+    );
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -394,13 +221,17 @@ export const updateActiveStatus = async (req, res) => {
     if (!validateObjectId(id)) {
       await session.abortTransaction();
       session.endSession();
-      return sendValidationError(res, [{ field: "id", message: "Invalid User ID" }]);
+      return sendValidationError(res, [
+        { field: "id", message: "Invalid User ID" },
+      ]);
     }
 
     if (typeof isActive !== "boolean") {
       await session.abortTransaction();
       session.endSession();
-      return sendValidationError(res, [{ field: "isActive", message: "isActive must be boolean" }]);
+      return sendValidationError(res, [
+        { field: "isActive", message: "isActive must be boolean" },
+      ]);
     }
 
     const user = await User.findById(id).session(session);
@@ -425,9 +256,13 @@ export const updateActiveStatus = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    const out = await User.findById(id).select("-password -refreshToken -emailVerificationToken -emailVerificationExpires");
+    const out = await User.findById(id).select(
+      "-password -refreshToken -emailVerificationToken -emailVerificationExpires"
+    );
 
-    const msg = isActive ? "User unblocked successfully" : "User blocked successfully";
+    const msg = isActive
+      ? "User unblocked successfully"
+      : "User blocked successfully";
     return sendSuccess(res, out, msg);
   } catch (error) {
     await session.abortTransaction();
@@ -452,13 +287,17 @@ export const updateRoleStatus = async (req, res) => {
     if (!validateObjectId(id)) {
       await session.abortTransaction();
       session.endSession();
-      return sendValidationError(res, [{ field: "id", message: "Invalid User ID" }]);
+      return sendValidationError(res, [
+        { field: "id", message: "Invalid User ID" },
+      ]);
     }
 
     if (!status || typeof status !== "string") {
       await session.abortTransaction();
       session.endSession();
-      return sendValidationError(res, [{ field: "status", message: "Status is required" }]);
+      return sendValidationError(res, [
+        { field: "status", message: "Status is required" },
+      ]);
     }
 
     const user = await User.findById(id).session(session);
@@ -472,7 +311,14 @@ export const updateRoleStatus = async (req, res) => {
       if (!ORGANIZER_STATUSES.includes(status)) {
         await session.abortTransaction();
         session.endSession();
-        return sendValidationError(res, [{ field: "status", message: `Invalid organizer status. Allowed: ${ORGANIZER_STATUSES.join(", ")}` }]);
+        return sendValidationError(res, [
+          {
+            field: "status",
+            message: `Invalid organizer status. Allowed: ${ORGANIZER_STATUSES.join(
+              ", "
+            )}`,
+          },
+        ]);
       }
       user.organizerInfo = user.organizerInfo || {};
       user.organizerInfo.status = status;
@@ -480,21 +326,33 @@ export const updateRoleStatus = async (req, res) => {
       if (!TICKET_CHECKER_STATUSES.includes(status)) {
         await session.abortTransaction();
         session.endSession();
-        return sendValidationError(res, [{ field: "status", message: `Invalid ticketChecker status. Allowed: ${TICKET_CHECKER_STATUSES.join(", ")}` }]);
+        return sendValidationError(res, [
+          {
+            field: "status",
+            message: `Invalid ticketChecker status. Allowed: ${TICKET_CHECKER_STATUSES.join(
+              ", "
+            )}`,
+          },
+        ]);
       }
       user.ticketCheckerInfo = user.ticketCheckerInfo || {};
       user.ticketCheckerInfo.status = status;
     } else {
       await session.abortTransaction();
       session.endSession();
-      return sendForbidden(res, "Role-based status allowed only for organizer or ticketChecker");
+      return sendForbidden(
+        res,
+        "Role-based status allowed only for organizer or ticketChecker"
+      );
     }
 
     await user.save({ session });
     await session.commitTransaction();
     session.endSession();
 
-    const out = await User.findById(id).select("-password -refreshToken -emailVerificationToken -emailVerificationExpires");
+    const out = await User.findById(id).select(
+      "-password -refreshToken -emailVerificationToken -emailVerificationExpires"
+    );
 
     return sendSuccess(res, out, "Role-based status updated");
   } catch (error) {
@@ -517,7 +375,9 @@ export const deleteUser = async (req, res) => {
     if (!validateObjectId(id)) {
       await session.abortTransaction();
       session.endSession();
-      return sendValidationError(res, [{ field: "id", message: "Invalid User ID" }]);
+      return sendValidationError(res, [
+        { field: "id", message: "Invalid User ID" },
+      ]);
     }
 
     const user = await User.findById(id).session(session);
@@ -547,4 +407,3 @@ export const deleteUser = async (req, res) => {
     return sendError(res, "Error deleting user");
   }
 };
-
