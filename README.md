@@ -9,6 +9,7 @@ Express.js backend
 Auth Ready Setup (JWT, cookies — routes to be added)
 Cloudinary + Multer media upload integration
 Razorpay Payment Setup
+QR code integration
 Environment-Based Config (.env.development, .env.production)
 Global error handling
 /health endpoint for server monitoring
