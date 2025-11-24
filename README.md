@@ -8,8 +8,8 @@ This project uses Modular Architecture and environment-based configuration (.env
 Express.js backend
 Auth Ready Setup (JWT, cookies — routes to be added)
 Cloudinary + Multer media upload integration
-Twilio OTP Support
 Razorpay Payment Setup
+QR code integration
 Environment-Based Config (.env.development, .env.production)
 Global error handling
 /health endpoint for server monitoring
@@ -33,19 +33,20 @@ src/
 
 1️⃣ Clone the Repository
 git clone https://github.com/KathanCodesHere/EventBookingBackend.git
+
 cd EventBookingBackend
 
 2️⃣ Install Dependencies
 npm install
 
 3️⃣ Environment Variables Setup
-
 # Copy and configure environment files
 
 cp .env.development.example .env.development
 cp .env.production.example .env.production
 
 🏁 Running the Project
+
 Development Server:
 npm run dev
 
@@ -83,7 +84,6 @@ Response:
 | multer-storage-cloudinary | Connects Multer + Cloudinary |
 | jsonwebtoken              | JWT authentication           |
 | bcryptjs                  | Password hashing             |
-| twilio                    | OTP services                 |
 | razorpay                  | Online payments              |
 | http-status-codes         | Clean status codes           |
 | cookie-parser             | Parse cookies                |
