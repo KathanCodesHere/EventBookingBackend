@@ -7,7 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import adminUserRoutes from "./routes/admin/adminUserRoutes.js";
 import adminOrganizerRoutes from "./routes/admin/adminOrgnizerRoutes.js";
 import organizerRoutes from "./routes/organizer/organizerRoutes.js";
-
+import organizerEventRoutes from "./routes/organizer/organizerEventRoutes.js";
 const app = express();
 
 /*Middlewares*/
@@ -38,7 +38,7 @@ app.use("/api/admin", adminOrganizerRoutes);
 
 //organizer routes
 app.use("/api/organizer", organizerRoutes);
-
+app.use("/api/event", organizerEventRoutes);
 /*Health Check
 Ye route check karta hai ki server sahi se chal raha hai ya nahi.
 */
