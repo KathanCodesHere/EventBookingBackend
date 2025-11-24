@@ -5,6 +5,9 @@ import cookieParser from "cookie-parser";
 //import routes
 import authRoutes from "./routes/authRoutes.js";
 import adminUserRoutes from "./routes/admin/adminUserRoutes.js";
+import adminOrganizerRoutes from "./routes/admin/adminOrgnizerRoutes.js";
+import organizerRoutes from "./routes/organizer/organizerRoutes.js";
+
 const app = express();
 
 /*Middlewares*/
@@ -30,7 +33,11 @@ app.use(
 app.use("/api/auth", authRoutes);
 
 //admin routes
-app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/admin", adminUserRoutes);
+app.use("/api/admin", adminOrganizerRoutes);
+
+//organizer routes
+app.use("/api/organizer", organizerRoutes);
 
 /*Health Check
 Ye route check karta hai ki server sahi se chal raha hai ya nahi.

@@ -13,14 +13,19 @@ import {
 const router = express.Router();
 
 //get all users
-router.get("/getAllUsers", authenticate, authorize("admin"), getAllUsers);
+router.get("/users/getAllUsers", authenticate, authorize("admin"), getAllUsers);
 
 //get user by id
-router.get("/getUserById/:id", authenticate, authorize("admin"), getUserById);
+router.get(
+  "/users/getUserById/:id",
+  authenticate,
+  authorize("admin"),
+  getUserById
+);
 
 //update user role by id
 router.patch(
-  "/updateUserRole/:id",
+  "/users/updateUserRole/:id",
   authenticate,
   authorize("admin"),
   updateUserRole
@@ -28,7 +33,7 @@ router.patch(
 
 //update user active statas=block/unblock=true/false
 router.patch(
-  "/updateActiveStatus/:id",
+  "/users/updateActiveStatus/:id",
   authenticate,
   authorize("admin"),
   updateActiveStatus
@@ -36,13 +41,18 @@ router.patch(
 
 //update role status =approved/pending/rejected
 router.patch(
-  "/updateRoleStatus/:id",
+  "/users/updateRoleStatus/:id",
   authenticate,
   authorize("admin"),
   updateRoleStatus
 );
 
 //delete user
-router.delete("/deleteUser/:id", authenticate, authorize("admin"), deleteUser);
+router.delete(
+  "/users/deleteUser/:id",
+  authenticate,
+  authorize("admin"),
+  deleteUser
+);
 
 export default router;
