@@ -68,7 +68,8 @@ export const signup = async (req, res) => {
     const roleValidation = validateRole(finalRole);
     if (!roleValidation.isValid) errors.push(roleValidation.message);
 
-    if (errors.length > 0) return sendValidationError(res, errors);
+    if (errors.length > 0)
+      return sendValidationError(res, errors, "Validation failed");
 
     // Check if mobile exists
     const existingMobile = await User.findOne({ mobile: sanitizedMobile });
@@ -138,7 +139,8 @@ export const login = async (req, res) => {
     if (!mobile) errors.push("Mobile is required");
     if (!password) errors.push("Password is required");
 
-    if (errors.length > 0) return sendValidationError(res, errors);
+    if (errors.length > 0)
+      return sendValidationError(res, errors, "Validation failed");
 
     // Check user
     const user = await User.findOne({ mobile: sanitizedMobile }).select(

@@ -3,18 +3,15 @@ import mongoose from "mongoose";
 // ORGANIZER DETAILS (only if role = organizer)
 const organizerSchema = new mongoose.Schema(
   {
-    companyName: String,
     email: String,
     mobile: String,
-    gstNumber: String,
-    address: String,
-    website: String,
-
+    organizerRequest: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "pending",
     },
+    reason: String, // optional reason for rejection
   },
   { _id: false }
 );
@@ -65,7 +62,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
       trim: true,
-      match: [/^[6-9]\d{9}$/, "Please fill a valid 10-digit mobile number"],
+      match: [/^[0-9]{10,15}$/, "Please enter a valid mobile number"],
       required: [true, "Mobile number is required"],
     },
 

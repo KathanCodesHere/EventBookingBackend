@@ -12,7 +12,7 @@ export const sendSuccess = (
     success: true,
     message,
     data,
-    timestamp: new Date().toISOString,
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -73,7 +73,7 @@ export const sendNotFound = (res, message = "Resource not found") => {
 
 //send conflict response(HTTP 409)
 export const sendConflict = (res, message = "Resource already exists") => {
-  return res.status(StatusCodes.CONFILCT).json({
+  return res.status(StatusCodes.CONFLICT).json({
     success: false,
     message,
     timestamp: new Date().toISOString(),
