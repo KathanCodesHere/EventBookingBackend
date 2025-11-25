@@ -13,12 +13,14 @@ import {
 // Create Event
 export const createEvent = async (req, res) => {
   try {
-    const { title, description, date, price, location } = req.body;
+    const { title, description, date, price, eventCategory, location } =
+      req.body;
 
     const { isValid, errors } = validateRequired({
       title,
       date,
       price,
+      eventCategory,
       location,
     });
     if (!isValid) return sendValidationError(res, errors);
@@ -29,6 +31,7 @@ export const createEvent = async (req, res) => {
       description,
       date,
       price,
+      eventCategory,
       location,
     });
 
@@ -115,5 +118,82 @@ export const deleteEvent = async (req, res) => {
   } catch (error) {
     console.log(error);
     return sendError(res, "Something went wrong while deleting event");
+  }
+};
+
+//event analytics
+export const eventAnalytics = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const total = await Ticket.countDocuments({ eventId });
+    const checkedIn = await Ticket.countDocuments({ eventId, isScanned: true });
+    const revenue = await Ticket.aggregate([
+      {
+        $match: { eventId: mongoose.Types.ObjectId(eventId), status: "booked" },
+      },
+      { $group: { _id: null, total: { $sum: "$price" } } },
+    ]);
+    return sendSuccess(
+      res,
+      { total, checkedIn, revenue: revenue[0]?.total || 0 },
+      "Analytics"
+    );
+  } catch (err) {
+    return sendError(res, "Error fetching analytics");
+  }
+};
+
+//get ALL events public
+export const getAllEventsPublic = async (req, res) => {
+  try {
+    // Optional filters → city, date, search, category
+    const { city, search, category } = req.query;
+
+    const filter = {
+      status: "active", // only approved / public events
+    };
+
+    if (city) filter["location.city"] = city;
+    if (category) filter.category = category;
+
+    if (search) {
+      filter.title = { $regex: search, $options: "i" };
+    }
+
+    const events = await Event.find(filter)
+      .select(
+        "title description date price images location eventCategory createdAt"
+      )
+      .sort({ date: 1 }); // nearest events first
+
+    return sendSuccess(res, events, "All events fetched");
+  } catch (err) {
+    return sendError(res, "Error fetching events");
+  }
+};
+
+//get single event public
+export const getSingleEventPublic = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    if (!validateObjectId(eventId))
+      return sendValidationError(res, [
+        { field: "eventId", message: "Invalid Event ID" },
+      ]);
+
+    const event = await Event.findOne({
+      _id: eventId,
+      status: "active",
+    }).select(
+      "title description date price images location eventCategory createdAt"
+    );
+
+    if (!event) return sendNotFound(res, "Event not found");
+
+    return sendSuccess(res, event, "Event fetched");
+  } catch (err) {
+    console.error("get single event error:", err);
+    return sendError(res, "error fetching single event");
   }
 };

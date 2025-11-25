@@ -5,7 +5,10 @@ import {
   getSingleEvent,
   updateEvent,
   deleteEvent,
-} from "../../controllers/organizer/organizerEventController.js";
+  eventAnalytics,
+  getAllEventsPublic,
+  getSingleEventPublic,
+} from "../../controllers/organizer/eventController.js";
 import { authenticate, authorize } from "../../middlewares/authMiddleware.js";
 const router = express.Router();
 
@@ -33,5 +36,19 @@ router.delete(
   authorize("organizer"),
   deleteEvent
 );
+
+//event analytica
+router.get(
+  "/eventAnalytics",
+  authenticate,
+  authorize("organizer"),
+  eventAnalytics
+);
+
+//get all events public route
+router.get("/getAllEvents", getAllEventsPublic);
+
+//get single event public route
+router.get("/getSingleEventPublic/:eventId", getSingleEventPublic);
 
 export default router;

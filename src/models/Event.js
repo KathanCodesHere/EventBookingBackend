@@ -11,6 +11,26 @@ const eventSchema = new mongoose.Schema(
     description: { type: String, trim: true, maxlength: 2000 },
     date: { type: Date, required: true },
     price: { type: Number, required: true, min: 0 },
+    eventCategory: {
+      type: String,
+      enum: [
+        "concert",
+        "music",
+        "sports",
+        "workshop",
+        "conference",
+        "seminar",
+        "exhibition",
+        "festival",
+        "comedy",
+        "theatre",
+        "meetup",
+        "party",
+        "charity",
+        "other",
+      ],
+      required: true,
+    },
     location: {
       address: { type: String, trim: true },
       coordinates: {
@@ -33,9 +53,8 @@ const eventSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "inactive", "draft"],
-      default: "active",
-      required: true,
+      enum: ["pending", "approved", "rejected", "active"],
+      default: "pending",
     },
   },
   { timestamps: true }
