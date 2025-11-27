@@ -4,13 +4,13 @@ import cookieParser from "cookie-parser";
 
 //import routes
 import authRoutes from "./routes/authRoutes.js";
-import adminUserRoutes from "./routes/admin/adminUserRoutes.js";
-import adminOrganizerRoutes from "./routes/admin/adminOrgnizerRoutes.js";
-import adminEventsRoutes from "./routes/admin/adminEventRoutes.js";
-import organizerRoutes from "./routes/organizer/organizerRoutes.js";
-import eventRoutes from "./routes/organizer/eventRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import organizerRoutes from "./routes/organizerRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import bookTicketRoutes from "./routes/bookTicketRoutes.js";
 import scannerRoutes from "./routes/scannerRoutes.js";
+
 const app = express();
 
 /*Middlewares*/
@@ -34,11 +34,10 @@ app.use(
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminUserRoutes);
-app.use("/api/admin", adminOrganizerRoutes);
-app.use("/api/admin", adminEventsRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/organizer", organizerRoutes);
 app.use("/api/event", eventRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/ticket", bookTicketRoutes);
 app.use("/api/scanner", scannerRoutes);
 

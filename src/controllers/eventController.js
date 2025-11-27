@@ -1,14 +1,14 @@
-import Event from "../../models/Event.js";
+import Event from "../models/Event.js";
 import {
   sendSuccess,
   sendError,
   sendNotFound,
   sendValidationError,
-} from "../../utils/responseHandler.js";
+} from "../utils/responseHandler.js";
 import {
   validateRequired,
   validateObjectId,
-} from "../../validation/validation.js";
+} from "../validation/validation.js";
 
 // Create Event
 export const createEvent = async (req, res) => {
@@ -140,60 +140,5 @@ export const eventAnalytics = async (req, res) => {
     );
   } catch (err) {
     return sendError(res, "Error fetching analytics");
-  }
-};
-
-//get ALL events public
-export const getAllEventsPublic = async (req, res) => {
-  try {
-    // Optional filters → city, date, search, category
-    const { city, search, category } = req.query;
-
-    const filter = {
-      status: "active", // only approved / public events
-    };
-
-    if (city) filter["location.city"] = city;
-    if (category) filter.category = category;
-
-    if (search) {
-      filter.title = { $regex: search, $options: "i" };
-    }
-
-    const events = await Event.find(filter)
-      .select(
-        "title description date price images location eventCategory createdAt"
-      )
-      .sort({ date: 1 }); // nearest events first
-
-    return sendSuccess(res, events, "All events fetched");
-  } catch (err) {
-    return sendError(res, "Error fetching events");
-  }
-};
-
-//get single event public
-export const getSingleEventPublic = async (req, res) => {
-  try {
-    const { eventId } = req.params;
-
-    if (!validateObjectId(eventId))
-      return sendValidationError(res, [
-        { field: "eventId", message: "Invalid Event ID" },
-      ]);
-
-    const event = await Event.findOne({
-      _id: eventId,
-      status: "active",
-    }).select(
-      "title description date price images location eventCategory createdAt"
-    );
-
-    if (!event) return sendNotFound(res, "Event not found");
-
-    return sendSuccess(res, event, "Event fetched");
-  } catch (err) {
-    console.error("get single event error:", err);
-    return sendError(res, "error fetching single event");
   }
 };

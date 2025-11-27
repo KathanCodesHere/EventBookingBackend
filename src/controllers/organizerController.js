@@ -1,4 +1,4 @@
-import User from "../../models/user.js";
+import User from "../models/user.js";
 import {
   sendSuccess,
   sendError,
@@ -6,7 +6,7 @@ import {
   sendValidationError,
   sendConflict,
   sendForbidden,
-} from "../../utils/responseHandler.js";
+} from "../utils/responseHandler.js";
 
 /**
  * POST /api/organizer/apply

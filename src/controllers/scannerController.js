@@ -1,11 +1,7 @@
 import Ticket from "../models/Ticket.js";
-import Event from "../models/Event.js";
-import { v4 as uuidv4 } from "uuid";
-import QRCode from "qrcode";
 import {
   sendSuccess,
   sendError,
-  sendValidationError,
   sendNotFound,
 } from "../utils/responseHandler.js";
 
