@@ -4,9 +4,12 @@ import cookieParser from "cookie-parser";
 
 //import routes
 import authRoutes from "./routes/authRoutes.js";
-import adminUserRoutes from "./routes/admin/adminUserRoutes.js";
-import adminOrganizerRoutes from "./routes/admin/adminOrgnizerRoutes.js";
-import organizerRoutes from "./routes/organizer/organizerRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import organizerRoutes from "./routes/organizerRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import bookTicketRoutes from "./routes/bookTicketRoutes.js";
+import scannerRoutes from "./routes/scannerRoutes.js";
 
 const app = express();
 
@@ -31,13 +34,12 @@ app.use(
 
 // Routes
 app.use("/api/auth", authRoutes);
-
-//admin routes
-app.use("/api/admin", adminUserRoutes);
-app.use("/api/admin", adminOrganizerRoutes);
-
-//organizer routes
+app.use("/api/admin", adminRoutes);
 app.use("/api/organizer", organizerRoutes);
+app.use("/api/event", eventRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/ticket", bookTicketRoutes);
+app.use("/api/scanner", scannerRoutes);
 
 /*Health Check
 Ye route check karta hai ki server sahi se chal raha hai ya nahi.

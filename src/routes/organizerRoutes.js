@@ -1,9 +1,9 @@
 import express from "express";
-import { authenticate } from "../../middlewares/authMiddleware.js";
+import { authenticate } from "../middlewares/authMiddleware.js";
 import {
   applyOrganizer,
   getOrganizerStatus,
-} from "../../controllers/organizer/organizerController.js";
+} from "../controllers/organizerController.js";
 
 const router = express.Router();
 

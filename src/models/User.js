@@ -84,6 +84,13 @@ const userSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     lastLogin: Date,
 
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event",
+      },
+    ],
+
     // Role-based additional info
     organizerInfo: organizerSchema,
     ticketCheckerInfo: ticketCheckerSchema,
