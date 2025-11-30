@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Event from "../models/Event.js";
+import Ticket from "../models/Ticket.js";
 import {
   sendSuccess,
   sendError,
@@ -125,20 +127,45 @@ export const deleteEvent = async (req, res) => {
 export const eventAnalytics = async (req, res) => {
   try {
     const { eventId } = req.params;
-    const total = await Ticket.countDocuments({ eventId });
-    const checkedIn = await Ticket.countDocuments({ eventId, isScanned: true });
-    const revenue = await Ticket.aggregate([
+
+    // Convert safely
+    const eventObjectId = new mongoose.Types.ObjectId(eventId);
+
+    //Total tickets for event
+    const total = await Ticket.countDocuments({ eventId: eventObjectId });
+
+    // Checked-in tickets
+    const checkedIn = await Ticket.countDocuments({
+      eventId: eventObjectId,
+      isScanned: true,
+    });
+
+    //Revenue (sum of price of booked tickets)
+    const revenueData = await Ticket.aggregate([
       {
-        $match: { eventId: mongoose.Types.ObjectId(eventId), status: "booked" },
+        $match: {
+          eventId: eventObjectId,
+          status: "booked",
+        },
       },
-      { $group: { _id: null, total: { $sum: "$price" } } },
+      {
+        $group: { _id: null, totalRevenue: { $sum: "$price" } },
+      },
     ]);
+
+    const revenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
+
     return sendSuccess(
       res,
-      { total, checkedIn, revenue: revenue[0]?.total || 0 },
-      "Analytics"
+      {
+        total,
+        checkedIn,
+        revenue,
+      },
+      "Event Analytics"
     );
   } catch (err) {
+    console.error("Event Analytics Error:", err);
     return sendError(res, "Error fetching analytics");
   }
 };

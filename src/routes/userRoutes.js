@@ -30,7 +30,7 @@ router.get("/getMyWishList", authenticate, getMyWishlist);
 router.delete("/removeFromWishList/:eventId", authenticate, removeFromWishlist);
 
 // Toggle wishlist (add/remove in one API)
-router.post("toggleWishList/:eventId", authenticate, toggleWishlist);
+router.post("/toggleWishList/:eventId", authenticate, toggleWishlist);
 
 // Wishlist Analytics (total count)
 router.get("/getWishListAnalytics", authenticate, getWishlistAnalytics);
