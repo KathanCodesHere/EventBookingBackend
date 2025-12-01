@@ -23,6 +23,13 @@ const ticketCheckerSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    assignedEvents: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event",
+      },
+    ],
+
     status: {
       type: String,
       enum: ["pending", "approved", "blocked"],
