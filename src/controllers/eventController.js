@@ -18,6 +18,23 @@ export const createEvent = async (req, res) => {
     const { title, description, date, price, eventCategory, location } =
       req.body;
 
+    // CHECK APPROVED ORGANIZER
+    if (req.user.role !== "organizer") {
+      return sendError(res, "Only organizers can create events");
+    }
+
+    // IMPORTANT FIX
+    if (
+      !req.user.organizerInfo ||
+      req.user.organizerInfo.status !== "approved"
+    ) {
+      return sendError(
+        res,
+        "Your organizer request is not approved yet. You cannot create events."
+      );
+    }
+
+    // VALIDATION
     const { isValid, errors } = validateRequired({
       title,
       date,
@@ -27,6 +44,7 @@ export const createEvent = async (req, res) => {
     });
     if (!isValid) return sendValidationError(res, errors);
 
+    // CREATE EVENT
     const event = await Event.create({
       organizerId: req.user._id,
       title,
