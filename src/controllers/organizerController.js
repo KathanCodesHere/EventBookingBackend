@@ -109,6 +109,84 @@ export const getOrganizerStatus = async (req, res) => {
 };
 
 //organizer dashboard analytics
+// export const organizerDashboardAnalytics = async (req, res) => {
+//   try {
+//     const organizerId = req.user._id;
+
+//     // Step 1: Get all events of this organizer
+//     const events = await Event.find({ organizerId }, { _id: 1 });
+
+//     const eventIds = events.map((e) => e._id);
+
+//     // If no events, directly return 0 data
+//     if (eventIds.length === 0) {
+//       return sendSuccess(
+//         res,
+//         {
+//           totalEvents: 0,
+//           upcomingEvents: 0,
+//           pastEvents: 0,
+//           ticketsSold: 0,
+//           totalRevenue: 0,
+//         },
+//         "Organizer Dashboard Analytics"
+//       );
+//     }
+//     // 1) Total Events
+//     const totalEvents = eventIds.length;
+
+//     // 2) Upcoming & Past Events
+//     const today = new Date();
+
+//     const upcomingEvents = await Event.countDocuments({
+//       organizerId,
+//       date: { $gte: today },
+//     });
+
+//     const pastEvents = await Event.countDocuments({
+//       organizerId,
+//       date: { $lt: today },
+//     });
+
+//     // 3) Total Tickets Sold
+//     const ticketsSold = await Ticket.countDocuments({
+//       eventId: { $in: eventIds },
+//       status: "booked",
+//     });
+
+//     // 4) Total Revenue
+//     const revenueData = await Ticket.aggregate([
+//       {
+//         $match: {
+//           eventId: { $in: eventIds },
+//           status: "booked",
+//         },
+//       },
+//       {
+//         $group: { _id: null, totalRevenue: { $sum: "$price" } },
+//       },
+//     ]);
+
+//     const totalRevenue =
+//       revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
+
+//     return sendSuccess(
+//       res,
+//       {
+//         totalEvents,
+//         upcomingEvents,
+//         pastEvents,
+//         ticketsSold,
+//         totalRevenue,
+//       },
+//       "Organizer Dashboard Analytics"
+//     );
+//   } catch (error) {
+//     console.error("Organizer Dashboard Analytics Error:", error);
+//     return sendError(res, "Error fetching dashboard analytics");
+//   }
+// };
+
 export const organizerDashboardAnalytics = async (req, res) => {
   try {
     const organizerId = req.user._id;
@@ -116,9 +194,10 @@ export const organizerDashboardAnalytics = async (req, res) => {
     // Step 1: Get all events of this organizer
     const events = await Event.find({ organizerId }, { _id: 1 });
 
-    const eventIds = events.map((e) => e._id);
+    // Convert event IDs to ObjectId (IMPORTANT FIX)
+    const eventIds = events.map((e) => new mongoose.Types.ObjectId(e._id));
 
-    // If no events, directly return 0 data
+    // If no events, return empty stats
     if (eventIds.length === 0) {
       return sendSuccess(
         res,
