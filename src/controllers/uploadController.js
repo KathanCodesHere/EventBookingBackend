@@ -1,23 +1,40 @@
-import { uploadToCloudinary } from "../utils/cloudinaryUpload.js";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
+import { sendError, sendSuccess } from "../utils/responseHandler.js";
 
 export const uploadImage = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No image uploaded" });
+    const { eventName } = req.body;
+    if (!req.file) return sendError(res, "File is required");
+
+    const result = await uploadToCloudinary(req.file, eventName);
+
+    return sendSuccess(res, { url: result.url }, "Image uploaded successfully");
+  } catch (error) {
+    console.error(error);
+    return sendError(res, "Image upload failed");
+  }
+};
+
+export const uploadMultipleImages = async (req, res) => {
+  try {
+    const { eventName } = req.body;
+
+    if (!req.files || req.files.length < 5)
+      return sendError(res, "Minimum 5 images required");
+
+    if (req.files.length > 10)
+      return sendError(res, "Maximum 10 images allowed");
+
+    const urls = [];
+
+    for (const file of req.files) {
+      const result = await uploadToCloudinary(file, eventName);
+      urls.push(result.url);
     }
 
-    const result = await uploadToCloudinary(req.file.buffer, "profile_images");
-
-    res.status(200).json({
-      message: "Image uploaded successfully",
-      imageUrl: result.secure_url,
-      publicId: result.public_id,
-    });
+    return sendSuccess(res, { urls }, "Images uploaded successfully");
   } catch (error) {
-    console.error("uploadImage error:", error);
-    res.status(500).json({
-      message: "Image upload failed",
-      error: error.message,
-    });
+    console.error(error);
+    return sendError(res, "Multiple image upload failed");
   }
 };

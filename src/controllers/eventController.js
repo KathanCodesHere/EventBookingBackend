@@ -10,41 +10,46 @@ import {
 import {
   validateRequired,
   validateObjectId,
+  sanitizeObject,
 } from "../validation/validation.js";
 
 // Create Event
 export const createEvent = async (req, res) => {
   try {
-    const { title, description, date, price, eventCategory, location } =
-      req.body;
+    const {
+      title,
+      description,
+      date,
+      price,
+      eventCategory,
+      location,
+      bannerImage,
+      images,
+    } = req.body;
 
-    // CHECK APPROVED ORGANIZER
     if (req.user.role !== "organizer") {
       return sendError(res, "Only organizers can create events");
     }
 
-    // IMPORTANT FIX
     if (
       !req.user.organizerInfo ||
       req.user.organizerInfo.status !== "approved"
     ) {
-      return sendError(
-        res,
-        "Your organizer request is not approved yet. You cannot create events."
-      );
+      return sendError(res, "Organizer not approved yet");
     }
 
-    // VALIDATION
     const { isValid, errors } = validateRequired({
       title,
       date,
       price,
       eventCategory,
       location,
+      bannerImage,
+      images,
     });
+
     if (!isValid) return sendValidationError(res, errors);
 
-    // CREATE EVENT
     const event = await Event.create({
       organizerId: req.user._id,
       title,
@@ -53,11 +58,13 @@ export const createEvent = async (req, res) => {
       price,
       eventCategory,
       location,
+      bannerImage,
+      images,
     });
 
     return sendSuccess(res, event, "Event created successfully");
-  } catch (err) {
-    return sendError(res, err.message);
+  } catch (error) {
+    return sendError(res, error.message);
   }
 };
 

@@ -156,8 +156,7 @@ export const downloadTicketPDF = async (req, res) => {
       return sendError(res, "Not authorized");
 
     // QR should contain URL
-    const qrUrl = `http://192.168.43.219:5000/api/scanner/checkin/${ticket.ticketId}`;
-
+    const qrUrl = process.env.QR_URL;
     const qrData = await QRCode.toDataURL(qrUrl);
 
     const doc = new PDFDocument({ margin: 40 });
