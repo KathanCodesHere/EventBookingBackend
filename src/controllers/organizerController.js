@@ -12,7 +12,6 @@ import {
 } from "../utils/responseHandler.js";
 
 /**
- * POST /api/organizer/apply
  * Auth: user must be logged in (role stays "user" until admin approves)
  */
 
@@ -78,7 +77,6 @@ export const applyOrganizer = async (req, res) => {
 };
 
 /**
- * GET /api/organizer/status
  * Returns current user's organizer info & status
  */
 export const getOrganizerStatus = async (req, res) => {
@@ -116,9 +114,10 @@ export const organizerDashboardAnalytics = async (req, res) => {
     // Step 1: Get all events of this organizer
     const events = await Event.find({ organizerId }, { _id: 1 });
 
-    const eventIds = events.map((e) => e._id);
+    // Convert event IDs to ObjectId (IMPORTANT FIX)
+    const eventIds = events.map((e) => new mongoose.Types.ObjectId(e._id));
 
-    // If no events, directly return 0 data
+    // If no events, return empty stats
     if (eventIds.length === 0) {
       return sendSuccess(
         res,

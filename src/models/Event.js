@@ -43,14 +43,16 @@ const eventSchema = new mongoose.Schema(
       state: { type: String, trim: true },
       pincode: { type: String, trim: true },
     },
+    //SINGLE IMAGE
+    bannerImage: {
+      type: String,
+    },
+    // MULTIPLE IMAGES
     images: [
       {
         type: String,
       },
     ],
-    bannerImage: {
-      type: String,
-    },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected", "active"],

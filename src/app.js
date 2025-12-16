@@ -11,6 +11,7 @@ import userRoutes from "./routes/userRoutes.js";
 import bookTicketRoutes from "./routes/bookTicketRoutes.js";
 import scannerRoutes from "./routes/scannerRoutes.js";
 import ticketCheckerRoutes from "./routes/ticketCheckerRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
 const app = express();
 
 /*Middlewares*/
@@ -41,6 +42,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/ticket", bookTicketRoutes);
 app.use("/api/scanner", scannerRoutes);
 app.use("/api/ticketChecker", ticketCheckerRoutes);
+app.use("/api/upload", uploadRoutes);
 
 /*Health Check
 Ye route check karta hai ki server sahi se chal raha hai ya nahi.
